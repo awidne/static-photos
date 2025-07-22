@@ -1,0 +1,152 @@
+{{/* layouts/shortcodes/photos-grid.html */}}
+{{ $maxWidth := default "800" (.Get "maxWidth") }}
+{{ $gallery := default "gallery" (.Get "gallery") }}
+{{ $columns := default "4" (.Get "columns") }}
+
+<div class="photos-grid" style="--columns: {{ $columns }};">
+  {{/* Create a slice to hold images with dates */}}
+  {{ $datedImages := slice }}
+  
+  {{/* First collect all images with their dates */}}
+  {{ range .Page.Resources.ByType "image" }}
+    {{ $dateStr := replaceRE `^(\d{4}-\d{2}-\d{2}).*` "$1" .Name }}
+    {{ $date := time $dateStr }}
+    {{ $datedImages = $datedImages | append (dict 
+      "resource" .
+      "date" $date
+      "dateStr" $dateStr
+    ) }}
+  {{ end }}
+  
+  {{/* Sort by date in descending order */}}
+  {{ $sortedImages := sort $datedImages "date" "desc" }}
+  
+  {{/* Now display the sorted images */}}
+  {{ range $sortedImages }}
+    {{ $image := .resource }}
+    {{ $date := .date }}
+    
+    {{/* Safely lookup image metadata */}}
+    {{ $imageName := $image.Name }}
+    {{ $imageTitle := "" }}
+    {{ $imageCaption := "" }}
+    
+    {{ if $.Page.Params.resources }}
+      {{ range $.Page.Params.resources }}
+        {{ if eq .src $imageName }}
+          {{ $imageTitle = .title }}
+          {{ $imageCaption = .caption }}
+        {{ end }}
+      {{ end }}
+    {{ end }}
+    
+    {{ $thumbnail := $image.Resize (printf "%sx" $maxWidth) }}
+    <div class="photos-item">
+      <a href="{{ $image.RelPermalink }}" 
+         data-fancybox="{{ $gallery }}" 
+         data-caption="{{ with $imageTitle }}{{ . }}{{ end }}{{ with $imageCaption }} - {{ . }}{{ end }}"
+         class="photos-link">
+        <img src="{{ $thumbnail.RelPermalink }}" 
+             alt="{{ with $imageTitle }}{{ . }}{{ else }}{{ $date.Format "Jan 2, 2006" }}{{ end }}" 
+             loading="lazy"
+             style="aspect-ratio: {{ div (float $image.Width) $image.Height }};"
+             data-date="{{ $date.Format "2006-01-02" }}">
+        <div class="photos-overlay">
+          {{ with $imageTitle }}<div class="photos-title">{{ . }}</div>{{ end }}
+          {{ with $imageCaption }}<div class="photos-caption">{{ . }}</div>{{ end }}
+        </div>
+      </a>
+    </div>
+  {{ end }}
+</div>
+
+
+<style>
+  .photos-grid {
+    display: grid;
+    grid-template-columns: repeat(var(--columns), 1fr);
+    grid-gap: 16px;
+    align-items: start;
+  }
+
+  .photos-item {
+    position: relative;
+    overflow: hidden;
+    border-radius: 18px;
+  }
+
+  .photos-link {
+    display: block;
+    position: relative;
+    box-shadow: none !important;
+  }
+
+  .photos-link img {
+    width: 100%;
+    height: auto;
+    transition: all 0.3s ease;
+  }
+
+  .photos-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    color: rgb(222, 222, 222);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    padding: 20px;
+    text-align: center;
+  }
+
+  .photos-item:hover .photos-overlay {
+    opacity: 1;
+  }
+
+  .photos-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-bottom: 8px;
+  }
+
+  .photos-caption {
+    font-size: 0.9rem;
+    line-height: 1.4;
+  }
+
+  @media (max-width: 768px) {
+    .photos-grid {
+      --columns: 2 !important;
+    }
+  }
+</style>
+
+<!-- Fancybox CSS/JS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.css"/>
+<script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.umd.js"></script>
+<script>
+  Fancybox.bind("[data-fancybox]", {
+    Thumbs: false,
+    Toolbar: {
+      display: {
+        left: [],
+        middle: [],
+        right: ["close"],
+      },
+    },
+    on: {
+      init: (fancybox) => {
+        // Allow hover effects to work
+        document.querySelectorAll('.photos-item').forEach(item => {
+          item.style.pointerEvents = 'auto';
+        });
+      }
+    }
+  });
+</script>
