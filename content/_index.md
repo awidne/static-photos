@@ -2,11 +2,20 @@
 title: "Home"
 type: "home"
 resources:
+  - src: ""
+    title: ""
+    caption: ""
+  - src: "2025-08-01-1.jpg"
+    title: "BMW"
+    caption: "Vancouver, Canada"
+  - src: "2025-08-01.jpg"
+    title: "Night"
+    caption: "Vancouver, Canada"
   - src: "2025-07-12.jpg"
     title: "Cheakamus lake"
     caption: "Whistler, Canada"
   - src: "2025-06-21.jpg"
-    title: "Home on hill"
+    title: "Hill-top home"
     caption: "Osoyoos, Canada"
   - src: "2025-06-07-3.jpg"
     title: "Float planes"
@@ -23,13 +32,16 @@ resources:
   - src: "2025-03-06.jpg"
     title: "Two-lane road"
     caption: "Oshawa, Canada"
-  - src: ""
-    title: ""
-    caption: ""
+  - src: "2022-08-26.jpg"
+    title: "Lake"
+    caption: "100 Mile House, Canada"
+  - src: "2022-08-19.jpg"
+    title: "Trestle bridge"
+    caption: "West Vancouver, Canada"
 ---
 
 ## Photo Collection
-Shot on Fujifilm X-T5 | XF 16-50mm f2.8-4.8
+Shot on Fujifilm X-T5 &nbsp;|&nbsp; XF 16-50mm f2.8-4.8
 
 {{< photo-grid 
     maxWidth="600"

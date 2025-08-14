@@ -3,7 +3,7 @@
 {{ $gallery := default "gallery" (.Get "gallery") }}
 {{ $columns := default "4" (.Get "columns") }}
 
-<div class="photos-grid" style="--columns: {{ $columns }};">
+<div class="photos-grid" style="--columns: {{ $columns }}; --mobile-columns: 2;">
   {{/* Create a slice to hold images with dates */}}
   {{ $datedImages := slice }}
   
@@ -97,7 +97,6 @@
     border-radius: 18px;
     display: inline-block;
     width: 100%;
-    margin-bottom: -30px;
   }
 
   .photos-link {
@@ -147,16 +146,19 @@
     line-height: 1.4;
   }
 
-  @media (max-width: 719px) {
+  @media (max-width: 768px) {
     .photos-grid {
-      flex-direction: column;
+      --columns: var(--mobile-columns);
     }
     .photos-column {
-      width: 100%;
+      flex: 0 0 calc(50% - 8px);
+    }
+    .photos-column:nth-child(n+3) {
+      display: none;
     }
   }
 </style>
-  <!-- 768px default -->
+
 <!-- Fancybox CSS/JS -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.css"/>
 <script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.umd.js"></script>
